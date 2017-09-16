@@ -11,6 +11,8 @@ class ThreadsTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Thread::class, 50)->create();
+        factory(App\Thread::class, 250)->create()->each(function ($thread) {
+            $thread->replies()->saveMany(factory(App\Reply::class, 5)->make());
+        });
     }
 }

@@ -11,6 +11,13 @@ class ThreadsTest extends TestCase
 {
     use DatabaseMigrations;
 
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->thread = factory('App\Thread')->create();
+    }
+
     /**
      * A basic test example.
      *
@@ -18,19 +25,25 @@ class ThreadsTest extends TestCase
      */
     public function testUserCanViewAllThreads()
     {
-        $thread   = factory('App\Thread')->create();
         $response = $this->get('/threads');
 
         $response->assertStatus(200);
-        $response->assertSee($thread->title);
+        $response->assertSee($this->thread->title);
     }
 
     public function testUserCanViewASingleThread()
     {
-        $thread   = factory('App\Thread')->create();
-        $response = $this->get('/threads/' . $thread->id);
+        $response = $this->get('/threads/' . $this->thread->id);
 
         $response->assertStatus(200);
-        $response->assertSee($thread->title);
+        $response->assertSee($this->thread->title);
+    }
+
+    public function testUserCanViewRepliesToAThread()
+    {
+        $reply = factory('App\Reply')->create(['thread_id' => $this->thread->id]);
+        $response = $this->get('/threads/' . $this->thread->id);
+
+        $response->assertSee($reply->body);
     }
 }
