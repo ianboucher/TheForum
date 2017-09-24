@@ -13,9 +13,11 @@ class ForumParticipatonTest extends TestCase
 
     function testUnauthenticatedUserCannotParticipateInThreads()
     {
-        // this relies on Exceptions\Handler being forced to throw in testing
-        $this->expectException('Illuminate\Auth\AuthenticationException');
-        $response = $this->post('/threads/1/replies', []);
+        $thread = factory('App\Thread')->create();
+
+        $this->withExceptionHandling()
+            ->post($thread->path() . '/replies', [])
+            ->assertRedirect('/login');
     }
 
     public function testAuthenticatedUserCanParticipateInThreads()

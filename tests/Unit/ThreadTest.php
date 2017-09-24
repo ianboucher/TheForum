@@ -10,29 +10,42 @@ class ThreadTest extends TestCase
 {
     use DatabaseMigrations;
 
-    public function testAThreadHasReplies()
+    public function setUp()
     {
-        $thread = factory('App\Thread')->create();
+        parent::setUp();
 
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $thread->replies);
+        $this->thread = factory('App\Thread')->create();
+    }
+
+    public function testAThreadCanReturnItsPath()
+    {
+        $this->assertEquals(
+            "/threads/{$this->thread->channel->slug}/{$this->thread->id}",
+            $this->thread->path());
     }
 
     public function testAThreadHasAnOwner()
     {
-        $thread = factory('App\Thread')->create();
+        $this->assertInstanceOf('App\User', $this->thread->owner);
+    }
 
-        $this->assertInstanceOf('App\User', $thread->owner);
+    public function testAThreadHasReplies()
+    {
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Collection', $this->thread->replies);
     }
 
     public function testAThreadCanAddAReply()
     {
-        $thread = factory('App\Thread')->create();
-
-        $thread->replies()->create([
+        $this->thread->replies()->create([
             'body' => 'Test body',
             'user_id' => 1,
         ]);
 
-        $this->assertCount(1, $thread->replies);
+        $this->assertCount(1, $this->thread->replies);
+    }
+
+    public function testAThreadBelongsToAChannel()
+    {
+        $this->assertInstanceOf('App\Channel', $this->thread->channel);
     }
 }

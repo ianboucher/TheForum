@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ThreadsTest extends TestCase
+class ReadThreadsTest extends TestCase
 {
     use DatabaseMigrations;
 
@@ -33,7 +33,7 @@ class ThreadsTest extends TestCase
 
     public function testUserCanViewASingleThread()
     {
-        $response = $this->get('/threads/' . $this->thread->id);
+        $response = $this->get($this->thread->path());
 
         $response->assertStatus(200);
         $response->assertSee($this->thread->title);
@@ -42,7 +42,7 @@ class ThreadsTest extends TestCase
     public function testUserCanViewRepliesToAThread()
     {
         $reply = factory('App\Reply')->create(['thread_id' => $this->thread->id]);
-        $response = $this->get('/threads/' . $this->thread->id);
+        $response = $this->get($this->thread->path());
 
         $response->assertSee($reply->body);
     }
