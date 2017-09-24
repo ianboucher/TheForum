@@ -25,6 +25,13 @@ class CreateThreadsTest extends TestCase
         $this->post('/threads', $thread->toArray());
     }
 
+    public function testAGuestUserCannotSeeTheCreateThreadForm()
+    {
+        $this->withExceptionHandling()
+            ->get('/threads/create')
+            ->assertRedirect('/login');
+    }
+
     /**
      * A basic test example.
      *
