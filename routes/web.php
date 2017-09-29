@@ -24,4 +24,8 @@ Route::get('threads/create', 'ThreadsController@create');
 Route::get('threads/{channel}/{thread}', 'ThreadsController@show');
 Route::post('threads', 'ThreadsController@store');
 
+// The order/position of this route is important - Laravel can get confused by
+// this route when trying to hit 'threads/create'
+Route::get('threads/{channel}', 'ThreadsController@index');
+
 Route::post('/threads/{channel}/{thread}/replies', 'RepliesController@store');
