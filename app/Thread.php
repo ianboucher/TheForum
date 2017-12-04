@@ -8,6 +8,16 @@ class Thread extends Model
 {
     protected $guarded = [];
 
+    protected static function boot() 
+    {
+        parent::boot();
+
+        // for all Thread queries apply this queryScope to add count
+        static::addGlobalScope('replyCount', function($builder) {
+            $builder->withCount('replies');
+        });
+    }
+
     public function replies()
     {
         return $this->hasMany(Reply::class);
